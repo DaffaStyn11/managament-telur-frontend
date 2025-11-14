@@ -26,7 +26,7 @@ export default function Home() {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-black to-gray-900 text-white">
-      <Card className="w-full max-w-sm bg-black/80 border border-gray-800 shadow-xl rounded-2xl backdrop-blur-md">
+      <Card className="w-full max-w-sm bg-black/80 border border-gray-800 shadow-xl shadow-white rounded-2xl backdrop-blur-md">
         <CardHeader className="text-center space-y-1">
           <CardTitle className="text-2xl font-semibold text-white tracking-wide">
             Selamat Datang
