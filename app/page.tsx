@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -24,8 +24,75 @@ export default function Home() {
     console.log("Login", { email, password });
   };
 
+  useEffect(() => {
+  const canvas = document.getElementById("web3-bg") as HTMLCanvasElement;
+  const ctx = canvas.getContext("2d");
+
+  let w = (canvas.width = window.innerWidth);
+  let h = (canvas.height = window.innerHeight);
+
+  const nodes = Array.from({ length: 60 }, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    vx: (Math.random() - 0.5) * 0.4,
+    vy: (Math.random() - 0.5) * 0.4,
+  }));
+
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+
+    // DRAW LINES
+    for (let i = 0; i < nodes.length; i++) {
+      for (let j = i + 1; j < nodes.length; j++) {
+        const a = nodes[i];
+        const b = nodes[j];
+
+        const dist = Math.hypot(a.x - b.x, a.y - b.y);
+
+        if (dist < 150) {
+          const alpha = 1 - dist / 150;
+
+          ctx.strokeStyle = `rgba(0, 255, 255, ${alpha * 0.6})`;
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(a.x, a.y);
+          ctx.lineTo(b.x, b.y);
+          ctx.stroke();
+        }
+      }
+    }
+
+    // DRAW POINTS / DOTS
+    nodes.forEach((p) => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,255,255,0.9)";
+      ctx.shadowBlur = 15;
+      ctx.shadowColor = "#00ffff";
+      ctx.fill();
+
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.x < 0 || p.x > w) p.vx *= -1;
+      if (p.y < 0 || p.y > h) p.vy *= -1;
+    });
+
+    requestAnimationFrame(animate);
+  }
+
+  animate();
+}, []);
+
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-black to-gray-900 text-white">
+  {/* WEB3 NETWORK BACKGROUND */}
+  <div className="absolute inset-0 pointer-events-none">
+    <canvas id="web3-bg" className="w-full h-full"></canvas>
+  </div>
+      
+      {/* NEON GLOW WRAPPER */}
+  <div className="relative p-[3px] rounded-2xl neon-wrapper">
       <Card className="w-full max-w-sm bg-black/80 border border-gray-800 shadow-xl shadow-white rounded-2xl backdrop-blur-md">
         <CardHeader className="text-center space-y-1">
           <CardTitle className="text-2xl font-semibold text-white tracking-wide">
@@ -121,6 +188,7 @@ export default function Home() {
           </p>
         </CardFooter>
       </Card>
+    </div>
     </div>
   );
 }
